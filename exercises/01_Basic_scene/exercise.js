@@ -4,13 +4,8 @@ window.setTimeout(function onLoad() {
     var
     scene, camera, renderer, container,
     render_width = 640, render_height = 480,
-    THREE = require('three'),
-    Physijs = require('physijs-browserify')(THREE),
-    prefix = '../../node_modules/physijs-browserify/libs/';
-
-    Physijs.scripts.worker = prefix + 'physi-worker.js';
-    Physijs.scripts.ammo = prefix + 'ammo.js';
-
+    THREE = require('three');
+    
     container = document.getElementById('theContainer');
 
     scene = new THREE.Scene();
@@ -49,10 +44,8 @@ window.setTimeout(function onLoad() {
 
     }
 
-    animate();
-
+    animate();    
     
-    
-    console.log('running!');
+    console.log('01 - Basic scene!');
     
 }, 1000);
