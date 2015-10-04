@@ -11,6 +11,7 @@
         "build04": "browserify exercises/04_Find_intersections/exercise.js > exercises/04_Find_intersections/bundle.js",
         "build05": "browserify exercises/05_Add_physics/exercise.js > exercises/05_Add_physics/bundle.js",
         "build06": "browserify exercises/06_Collisions/exercise.js > exercises/06_Collisions/bundle.js",
+        "build07": "browserify exercises/07_Environment_map/exercise.js > exercises/07_Environment_map/bundle.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Pietro Grandi",
