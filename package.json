@@ -1,0 +1,19 @@
+{
+    "name": "interactive_3d_with_webgl_and_three_js",
+    "version": "0.0.1",
+    "description": "",
+    "main": "package.json",
+    "scripts": {
+        "start": "http-server -a localhost -p 8000",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Pietro Grandi",
+    "license": "MIT",
+    "dependencies": {
+        "browserify" : "11.2.0",
+        "bootstrap": "3.3.5",
+        "requirejs" : "2.1.20",
+        "three" : "0.72.0",
+        "physijs-browserify" : "0.0.2"
+    }
+}
