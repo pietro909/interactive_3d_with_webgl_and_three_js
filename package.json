@@ -7,6 +7,7 @@
         "start": " http-server -a localhost -p 8000",
         "build01": "browserify exercises/01_Basic_scene/exercise.js > exercises/01_Basic_scene/bundle.js",
         "build02": "browserify exercises/02_Animate_transformations/exercise.js > exercises/02_Animate_transformations/bundle.js",
+        "build03": "browserify exercises/03_User_interaction/exercise.js > exercises/03_User_interaction/bundle.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Pietro Grandi",
@@ -16,6 +17,7 @@
         "bootstrap": "3.3.5",
         "requirejs" : "2.1.20",
         "three" : "0.72.0",
-        "physijs-browserify" : "0.0.2"
+        "physijs-browserify" : "0.0.2",
+        "three-orbit-controls": "71.0.0"
     }
 }
