@@ -9,6 +9,7 @@
         "build02": "browserify exercises/02_Animate_transformations/exercise.js > exercises/02_Animate_transformations/bundle.js",
         "build03": "browserify exercises/03_User_interaction/exercise.js > exercises/03_User_interaction/bundle.js",
         "build04": "browserify exercises/04_Find_intersections/exercise.js > exercises/04_Find_intersections/bundle.js",
+        "build05": "browserify exercises/05_Add_physics/exercise.js > exercises/05_Add_physics/bundle.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Pietro Grandi",
