@@ -1,8 +1,13 @@
 {
     "name": "interactive_3d_with_webgl_and_three_js",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "",
     "main": "package.json",
+    "description" : "seven tutorials for using ThreeJS and PhisiJS with Browserify in order to build an interactive web application WebGL powered",
+    "repository" : {
+	"type" : "git",
+	"url" : "https://github.com/pietro909/interactive_3d_with_webgl_and_three_js.git"
+    },
     "scripts": {
         "start": " http-server -a localhost -p 8000",
         "build01": "browserify exercises/01_Basic_scene/exercise.js > exercises/01_Basic_scene/bundle.js",
@@ -19,7 +24,6 @@
     "dependencies": {
         "browserify" : "11.2.0",
         "bootstrap": "3.3.5",
-        "requirejs" : "2.1.20",
         "three" : "0.72.0",
         "physijs-browserify" : "0.0.2",
         "three-orbit-controls": "71.0.0"
