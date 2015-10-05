@@ -22,10 +22,12 @@
     "author": "Pietro Grandi",
     "license": "MIT",
     "dependencies": {
-        "browserify" : "11.2.0",
-        "bootstrap": "3.3.5",
-        "three" : "0.72.0",
-        "physijs-browserify" : "0.0.2",
-        "three-orbit-controls": "71.0.0"
+	"bootstrap": "3.3.5",
+	"browserify": "11.2.0",
+	"http-server": "^0.8.5",
+	"physijs-browserify": "0.0.2",
+	"requirejs": "2.1.20",
+	"three": "0.72.0",
+	"three-orbit-controls": "71.0.0"
     }
 }
