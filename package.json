@@ -17,6 +17,7 @@
         "build05": "browserify exercises/05_Add_physics/exercise.js > exercises/05_Add_physics/bundle.js",
         "build06": "browserify exercises/06_Collisions/exercise.js > exercises/06_Collisions/bundle.js",
         "build07": "browserify exercises/07_Environment_map/exercise.js > exercises/07_Environment_map/bundle.js",
+	"demo": "browserify demo/demo.js > demo/bundle.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Pietro Grandi",
@@ -28,6 +29,7 @@
 	"physijs-browserify": "0.0.2",
 	"requirejs": "2.1.20",
 	"three": "0.72.0",
-	"three-orbit-controls": "71.0.0"
+	"three-orbit-controls": "71.0.0",
+	"three-loaders-collada": "1.0.1"
     }
 }
