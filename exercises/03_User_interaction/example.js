@@ -2,21 +2,13 @@ window.setTimeout(function onLoad() {
     'use strict';
 
     var
-    // basic setup
     scene, camera, renderer, container, material, geometry, mesh,
-    // lights
-    theLight1, theLight2,
-    // user interaction
-    orbitControls,
-    // render setup
+    theLight1, theLight2, orbitControls,
+    pos_x, pos_y, pos_z,
+    scale = 1, side = 3,
     render_width = 640, render_height = 480,
-    // for objects' construction
-    side = 3,
-    // dependencies here
     THREE = require('three'),
     OrbitControls = require('three-orbit-controls')(THREE);
-//    pos_x, pos_y, pos_z,
-//    scale = 1, side = 3,
 
     container = document.getElementById('theContainer');
 
@@ -31,6 +23,8 @@ window.setTimeout(function onLoad() {
     camera = new THREE.PerspectiveCamera(50, render_width / render_height, 1, 1000);
     camera.position.set(0, 0, 40);
 
+    orbitControls = new OrbitControls( camera );
+
     // warmer light from upper right
     theLight1 = new THREE.DirectionalLight(0xffdddd, 1);
     theLight1.position.set(10, 10, 20);
@@ -43,27 +37,8 @@ window.setTimeout(function onLoad() {
 
     geometry = new THREE.BoxGeometry( side, side, side );
     material = new THREE.MeshLambertMaterial({ color: 0xffee44 });
-    mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
 
     // start coding here
-
-    for (var i = 0; i < 20; i += 1)
-    {
-        pos_x = (i%2 === 0) ? (i * Math.random() + side) : (i * -Math.random() + side);
-        pos_y = (i%2 === 0) ? (i * Math.random() + side) : (i * -Math.random() + side);
-        pos_z = (i%2 === 0) ? (i * Math.random() + side) : (i * -Math.random() + side);
-        
-        scale += 0.04;
-        mesh = new THREE.Mesh( geometry, material );
-
-        mesh.position.set( pos_x, pos_y, pos_z );
-        mesh.rotateX( pos_x );
-        mesh.rotateY( pos_y );
-        mesh.rotateZ( pos_z );
-        mesh.scale.set( scale, scale, scale );
-        scene.add( mesh );
-    }
     
     function animate()
     {
