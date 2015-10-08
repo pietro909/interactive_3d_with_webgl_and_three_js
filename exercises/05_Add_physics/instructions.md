@@ -1,6 +1,6 @@
 Goal
 ====
-Add physical simulation and let the cube fall
+Find object intersected by mouse hovering
 
 Instructions
 ============
@@ -9,43 +9,86 @@ Instructions
 
 +   let the script point your _exercise.js_ file
 
-+   in the _exercise.js_ find out the new dependencies: __Physijs__, the engine which integrates with __ThreeJs__ 
++   in the _exercise.js_ stub provided, locate the variables declaration and you'll spot out __mouseVector__ and __rayCaster__
+
++   in order to find intersected objects, we need to handle the __mousemove__ event
 
     ```javascript
-    Physijs = require('physijs-browserify')(THREE)
+    function onMouseMove( event )
+    {
+        var localX, localY, canvasX, canvasY;
+
+        event.preventDefault();
+
+    }
+
+    container.onmousemove = onMouseMove;
     ```
 
-+   the engine needs to be configured with the __Ammo.js__ script path and the __physi-worker.js__ script path
++   the problem with event coordinates is that they are 2D coordinates, relative to the top left coorner: we have to remap them onto WebGL coordinates with (0, 0) located at the center of the canvas, in our event handler function
 
     ```javascript
-    Physijs.scripts.worker = 'node_modules/physijs-browserify/libs/physi-worker.js';
-    Physijs.scripts.ammo = 'ammo.js';
+    function onMouseMove( event )
+    {
+        var localX, localY, canvasX, canvasY;
+
+        event.preventDefault();
+
+        // canvas element local
+        localX = event.pageX - theContainer.offsetLeft;
+        localY = event.pageY - theContainer.offsetTop;
+    
+        // webgl context
+        canvasX = ( localX / renderer.domElement.width ) * 2 - 1;
+        canvasY = ( 1 - (localY / renderer.domElement.height ) ) * 2 - 1;
+    }
     ```
 
-+   as first step, let's use the __Physijs.Scene__ instead of standard __THREE.Scene__: this object provides the __setGravity__ method which takes a __THREE.Vector3__ describing the global forces
++   once we have the right coordinates system, it's time to project a ray from mouse position to the vanishing point and then lookup intersected geometries; so let's initialize the mouse position container and the ray caster:
 
     ```javascript
-    scene = new Physijs.Scene();
-    scene.setGravity( new THREE.Vector3( 0, -30, 0));
+    mouseVector = new THREE.Vector3();
+    rayCaster = new THREE.Raycaster();
     ```
 
-+   next step, use the material's wrapper provided by the framework: it takes the standard material and two parameters which describe how the object reacts to collisions
++   and now the actual projection: in the __intersections__ array are the intersected meshes, in the order they collide with the ray 
 
     ```javascript
-    physijsMaterial = Physijs.createMaterial( material, 0.3, 0.8 ); 
+    function onMouseMove( event )
+    {
+        //...
+
+        mouseVector.set( canvasX, canvasY, 1 );
+
+        rayCaster.setFromCamera( mouseVector, camera );
+
+        var intersections = rayCaster.intersectObjects( scene.children );
+
+        if (intersections.length > 0)
+        {
+            // the first intersected mesh
+            selected = intersections[0].object;
+        }
+    }
     ```
 
-+   and finally create a __Physijs.BoxMesh__ that is the wrapper for __THREE.BoxMesh__ and takes the same parameters: geometry and material
++   in the provided example we change the object's material, restoring it when the pointer leave the object; to do this, we can use the already defined __highlightMaterial__
 
     ```javascript
-    mesh = new Physijs.BoxMesh( geometry, physijsMaterial );
-    scene.add( mesh );
-    ```
+    if (intersections.length > 0)
+    {
+        currentIntersection = intersections[0].object;
+        currentIntersection.material = highlightMaterial;
+    }
 
-+   the last step is to run the update of the simulation each frame, in order to have the objects' positions up to date
+    // if a different one, restore it
+    if (lastIntersected !== undefined && lastIntersected !== currentIntersection)
+    {
+        lastIntersected.material = material;
+    }
 
-    ```javascript
-    scene.simulate();
+    // update intersected object
+    lastIntersected = currentIntersection;
     ```
 
 +   build the file using browserify and start the server, then head your browser to _localhost:8000_
