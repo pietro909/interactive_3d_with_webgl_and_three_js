@@ -39,7 +39,7 @@ window.setTimeout(function onLoad() {
         {
             direction *= -1;
             var x = Math.random() * direction;
-            var y = Math.random() * direction;
+            var y = Math.random() * -10;
             scene.setGravity(
                 new THREE.Vector3(x, y, 0)
             );
@@ -87,6 +87,50 @@ window.setTimeout(function onLoad() {
     
     scene.add( envSphere );
 
+    // bouncer
+    planeGeometry = new THREE.PlaneGeometry( 200, 200 );
+    planeMaterial = new THREE.MeshPhongMaterial(
+        {
+          // reflective?
+          side: THREE.FrontSide,
+          opacity: 0.5,
+          transparency: true
+        }
+    );
+    planeMesh = new Physijs.PlaneMesh(
+        planeGeometry,
+        Physijs.createMaterial( planeMaterial, 0.4, 0.8 )
+    );
+    planeMesh.position.setY( -100 );
+    planeMesh.__dirtyPosition = true;
+    planeMesh.rotateX( -Math.PI / 2 );
+    planeMesh.__dirtyRotation = true;
+    scene.add( planeMesh );
+
+    var lidMesh = planeMesh.clone();
+    lidMesh.position.setY( 100 );
+    lidMesh.rotateX( Math.PI );
+    scene.add( lidMesh );
+   
+
+    // the box container
+/*
+    var bigBoxGeometry = new THREE.BoxGeometry( 100, 100, 100 );
+    var bigBoxMaterial = new THREE.MeshBasicMaterial({
+        side: THREE.FrontSide //BackSide
+    });
+    var bigBox = new Physijs.BoxMesh(
+        bigBoxGeometry,
+        Physijs.createMaterial( bigBoxMaterial, 0.4, 0.8 )
+    );
+    scene.add( bigBox );
+
+    var constraint = new Physijs.PointConstraint(
+        bigBox, // First object to be constrained
+        new THREE.Vector3( 0, 0, 0 ) // point in the scene to apply the constraint
+    );
+    scene.addConstraint( constraint );
+*/
     // for reflections
     cubeCam = new THREE.CubeCamera(0.1, 10000, 512);
     cubeCam.renderTarget.mapping = THREE.CubeReflectionMapping;
