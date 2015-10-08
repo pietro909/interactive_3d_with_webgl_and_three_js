@@ -152,11 +152,7 @@ window.setTimeout(function onLoad() {
             if ( intersectables.length === 0 && myIndex !== -1)
             {
                 console.log('game over!');
-                gameOver = document.createElement('div');
-                gameOver.html = '<h1>Game over!</h1>';
-                gameOver.classes = 'jumbotron';
-                //gameOver.style = 'position: absolute;';
-                container.appendChild( gameOver );
+                
             }
         }
 
@@ -189,6 +185,7 @@ window.setTimeout(function onLoad() {
                         );
                         mesh.position.setX( 14 * x );
                         mesh.position.setY( 60 );
+                        mesh.position.setZ( -20 );
                         mesh.__dirtyPosition = true;
                         x -= 1;
 
