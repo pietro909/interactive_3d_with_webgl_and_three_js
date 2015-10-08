@@ -52,9 +52,33 @@ window.setTimeout(function onLoad() {
     scene.add(theLight2);
 
 
+    // environment map
+    envSphereGeometry = new THREE.SphereGeometry(5000, 64, 64);
+    envSphereText = THREE.ImageUtils.loadTexture('assets/images/bologna_by_night.jpg');
+    envSphereText.minFilter = THREE.NearestFilter;
+    envSphereMaterial = new THREE.MeshBasicMaterial({
+        map: envSphereText,
+        side: THREE.BackSide
+    });
+    envSphere = new THREE.Mesh(
+        envSphereGeometry,
+        envSphereMaterial
+    );
+    
+    scene.add(envSphere);
+
     geometry = new THREE.BoxGeometry( side, side, side );
 
-    // start coding here
+    // for reflections
+    cubeCam = new THREE.CubeCamera(0.1, 10000, 512);
+    cubeCam.renderTarget.mapping = THREE.CubeReflectionMapping;
+    cubeCam.position.set(0, 0, 0);
+
+    material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        envMap: cubeCam.renderTarget,
+        reflectivity: 0.9
+    });
     
     physijsMaterial = Physijs.createMaterial( material, 0.3, 0.8 );
 
@@ -70,8 +94,57 @@ window.setTimeout(function onLoad() {
     planeMesh.__dirtyRotation = true;
     scene.add( planeMesh );
 
+    function makeCubes( timestamp )
+    {
+        var random;
+        
+        random = Math.random() * 30;
+        pos_x = (timestamp % 2 === 0) ? (random + side) : (random - side);
+        pos_y = 20;
+        pos_z = 0;
+        
+        scale = Math.random() + 0.5;
+        
+        mesh = new Physijs.BoxMesh( geometry, physijsMaterial );
+        mesh.position.set( pos_x, pos_y, pos_z );
+        mesh.__dirtyPosition = true;
+        
+        mesh.rotateX( pos_x );
+        mesh.rotateY( pos_y );
+        mesh.rotateZ( pos_z );
+        mesh.__dirtyRotate = true;
+        
+        mesh.scale.set( scale, scale, scale );
+        mesh.__dirtyScale = true;
+
+        // save meshes and cameras to update
+        meshAndCameras.push({
+            camera : cubeCam,
+            mesh : mesh
+        });
+
+        scene.add( mesh );
+
+    }
+
+    var timeout = window.setInterval(
+        function()
+        {
+            makeCubes();
+
+            // 20 is hanging my Chrome window :-)
+            if (scene.children.length > 16)
+            {
+                window.clearInterval(timeout);
+            }
+        }, 2100 );
+    
     function animate()
     {
+        var i = meshAndCameras.length;
+        while (i--) {
+            meshAndCameras[i].camera.updateCubeMap( renderer, scene );
+        }
 
         scene.simulate();
         
