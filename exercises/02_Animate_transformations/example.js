@@ -2,15 +2,10 @@ window.setTimeout(function onLoad() {
     'use strict';
 
     var
-    // basic setup
     scene, camera, renderer, container, material, geometry, mesh,
-    // lights
-    theLight1, theLight2, ambientLight,
-    // render setup
-    render_width = 640, render_height = 480,
-    // animation's variables
+    theLight1, theLight2,
     scale = 1, k_scale = 0.01,
-    // dependencies here
+    render_width = 640, render_height = 480,
     THREE = require('three');
 
     container = document.getElementById('theContainer');
@@ -44,7 +39,14 @@ window.setTimeout(function onLoad() {
     
     function animate()
     {
-        // start coding here
+        // invert scale
+        k_scale = (scale > 2 || scale < 1) ? -k_scale : k_scale;            
+        scale += k_scale;
+        
+        mesh.rotateY( 0.01 );
+        mesh.rotateZ( 0.005 );
+        
+        mesh.scale.set(scale, scale, scale);
         
         renderer.render(scene, camera);
 
