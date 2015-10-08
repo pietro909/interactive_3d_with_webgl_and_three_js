@@ -19,8 +19,8 @@ window.setTimeout(function onLoad() {
 
     container = document.getElementById('theContainer');
 
-    // add the scene definition here
-    scene =
+    scene = new Physijs.Scene();
+    scene.setGravity( new THREE.Vector3( 0, -30, 0));
     
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(0xaabbff);
@@ -45,13 +45,40 @@ window.setTimeout(function onLoad() {
 
     geometry = new THREE.BoxGeometry( side, side, side );
     material = new THREE.MeshLambertMaterial({ color: 0xffee44 });
+    physijsMaterial = Physijs.createMaterial( material, 0.3, 0.8 ); 
+    
 
-    // start coding here
+    function makeCubes( timestamp )
+    {
+        var random = Math.random() * 30;
+        pos_x = (timestamp % 2 === 0) ? (random + side) : (random - side);
+        pos_y = 20;
+        pos_z = 0;
+        
+        scale = Math.random() + 0.5;
+        
+        mesh = new Physijs.BoxMesh( geometry, physijsMaterial );
 
+        mesh.position.set( pos_x, pos_y, pos_z );
+        mesh.__dirtyPosition = true;
+        
+        mesh.rotateX( pos_x );
+        mesh.rotateY( pos_y );
+        mesh.rotateZ( pos_z );
+        mesh.__dirtyRotate = true;
+        
+        mesh.scale.set( scale, scale, scale );
+        mesh.__dirtyScale = true;
 
+        scene.add( mesh );
+
+    }
+
+    window.setInterval( makeCubes, 700 );
+    
     function animate()
     {
-
+        scene.simulate();
         
         renderer.render(scene, camera);
 
