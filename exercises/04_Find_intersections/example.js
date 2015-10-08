@@ -38,15 +38,12 @@ window.setTimeout(function onLoad() {
 
     geometry = new THREE.BoxGeometry( side, side, side );
     material = new THREE.MeshLambertMaterial({ color: 0xffee44 });
-
-    // the material to use to highlight objects
     highlightMaterial = new THREE.MeshPhongMaterial({
         color: 0x00ff00,
         opacity: 0.6,
         transparent: true
     });
 
-    // populate scene
     for (var i = 0; i < 20; i += 1)
     {
         pos_x = (i%2 === 0) ? (i * Math.random() + side) : (i * -Math.random() + side);
@@ -64,7 +61,50 @@ window.setTimeout(function onLoad() {
         scene.add( mesh );
     }
 
-    // start coding here
+    mouseVector = new THREE.Vector3();
+    rayCaster = new THREE.Raycaster();
+
+    function onMouseMove(event)
+    {
+        var localX, localY, canvasX, canvasY;
+
+        event.preventDefault();
+
+        // canvas element local
+        localX = event.pageX - theContainer.offsetLeft,
+        localY = event.pageY - theContainer.offsetTop,
+        // webgl context
+        canvasX = (localX / renderer.domElement.width) * 2 - 1,
+        canvasY = (1 - (localY / renderer.domElement.height)) * 2 - 1;
+
+        checkIntersections(canvasX, canvasY);
+
+    }
+
+    function checkIntersections(mouseX, mouseY)
+    {
+        var currentIntersection;
+
+        mouseVector.set(mouseX, mouseY, 1);
+
+        rayCaster.setFromCamera(mouseVector, camera);
+
+        var intersections = rayCaster.intersectObjects( scene.children );
+
+        if (intersections.length > 0)
+        {
+            currentIntersection = intersections[0].object;
+            currentIntersection.material = highlightMaterial;
+        }
+
+        if (lastIntersected !== undefined && lastIntersected !== currentIntersection)
+        {
+            lastIntersected.material = material;
+        }
+
+        lastIntersected = currentIntersection;
+
+    }
     
     function animate()
     {
@@ -75,6 +115,7 @@ window.setTimeout(function onLoad() {
 
     }
 
+    container.onmousemove = onMouseMove;
     animate();
 
     console.log('04: Find intersections!');
