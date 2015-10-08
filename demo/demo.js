@@ -8,7 +8,8 @@ window.setTimeout(function onLoad() {
     theLight1, theLight2, ambientLight,
     // user interaction
     orbitControls, mouseVector, rayCaster,
-    lastIntersected, highlightMaterial,
+    intersectables = [], lastIntersected, highlightMaterial, overMaterial,
+    _highlightMaterial, _overMaterial,
     // collisions
     planeGeometry, planeMaterial, planePhysiMaterial, planeMesh,
     // environment
@@ -33,15 +34,16 @@ window.setTimeout(function onLoad() {
     scene = new Physijs.Scene();
     scene.setGravity( new THREE.Vector3( 0, -6, 0) );
 
-    // let it dance in the air...
+    // let the gravity grow...
+    var gravity = -2;
     setInterval(
         function( timeframe )
         {
             direction *= -1;
             var x = Math.random() * direction;
-            var y = Math.random() * -10;
+            gravity -= 1;
             scene.setGravity(
-                new THREE.Vector3(x, y, 0)
+                new THREE.Vector3(x, gravity, 0)
             );
         },
         2000
@@ -84,20 +86,20 @@ window.setTimeout(function onLoad() {
         envSphereGeometry,
         Physijs.createMaterial( envSphereMaterial, 0.3, 0.8 )
     );
-    
+    envSphere.rotateY( Math.PI / 2.28 );
     scene.add( envSphere );
 
     // bouncer
-    planeGeometry = new THREE.PlaneGeometry( 200, 200 );
+    planeGeometry = new THREE.PlaneGeometry( 300, 200 );
     planeMaterial = new THREE.MeshPhongMaterial(
         {
           // reflective?
           side: THREE.FrontSide,
           opacity: 0.5,
-          transparency: true
+          transparent: true
         }
     );
-    planeMesh = new Physijs.PlaneMesh(
+    planeMesh = new Physijs.BoxMesh(
         planeGeometry,
         Physijs.createMaterial( planeMaterial, 0.4, 0.8 )
     );
@@ -106,31 +108,7 @@ window.setTimeout(function onLoad() {
     planeMesh.rotateX( -Math.PI / 2 );
     planeMesh.__dirtyRotation = true;
     scene.add( planeMesh );
-
-    var lidMesh = planeMesh.clone();
-    lidMesh.position.setY( 100 );
-    lidMesh.rotateX( Math.PI );
-    scene.add( lidMesh );
-   
-
-    // the box container
-/*
-    var bigBoxGeometry = new THREE.BoxGeometry( 100, 100, 100 );
-    var bigBoxMaterial = new THREE.MeshBasicMaterial({
-        side: THREE.FrontSide //BackSide
-    });
-    var bigBox = new Physijs.BoxMesh(
-        bigBoxGeometry,
-        Physijs.createMaterial( bigBoxMaterial, 0.4, 0.8 )
-    );
-    scene.add( bigBox );
-
-    var constraint = new Physijs.PointConstraint(
-        bigBox, // First object to be constrained
-        new THREE.Vector3( 0, 0, 0 ) // point in the scene to apply the constraint
-    );
-    scene.addConstraint( constraint );
-*/
+  
     // for reflections
     cubeCam = new THREE.CubeCamera(0.1, 10000, 512);
     cubeCam.renderTarget.mapping = THREE.CubeReflectionMapping;
@@ -142,7 +120,47 @@ window.setTimeout(function onLoad() {
         reflectivity: 0.9
     });
 
+    // for selected meshes
+    _highlightMaterial = new THREE.MeshPhongMaterial({
+        color: 0x00ff00,
+        opacity: 0.6,
+        transparent: true
+    });
+    highlightMaterial = Physijs.createMaterial( _highlightMaterial, 0.4, 0.1 );
+
+    // for selected meshes
+     _overMaterial = new THREE.MeshLambertMaterial({
+        color: 0xcccccc
+    });
+    overMaterial = Physijs.createMaterial( _overMaterial, 0, 0 );
+
     meshAndCameras.push( cubeCam );
+
+    function handleCollision( collidedWith, linearVelocity, angularVelocity )
+    {
+        var gameOver,
+            me = this,
+            myIndex = intersectables.indexOf( me );
+
+        me.userData.collisions += 1;
+
+        if ( me.userData.collisions > 5 )
+        {
+            intersectables.splice( myIndex, 1 );
+            me.material = overMaterial;
+
+            if ( intersectables.length === 0 && myIndex !== -1)
+            {
+                console.log('game over!');
+                gameOver = document.createElement('div');
+                gameOver.html = '<h1>Game over!</h1>';
+                gameOver.classes = 'jumbotron';
+                //gameOver.style = 'position: absolute;';
+                container.appendChild( gameOver );
+            }
+        }
+
+    }
 
     var loader = new THREE.ColladaLoader();
     loader.load(
@@ -170,16 +188,104 @@ window.setTimeout(function onLoad() {
                             phyMat
                         );
                         mesh.position.setX( 14 * x );
+                        mesh.position.setY( 60 );
                         mesh.__dirtyPosition = true;
                         x -= 1;
+
+                        // manage collisions
+                        mesh.userData.collisions = 0;
+                        mesh.addEventListener( 'collision', handleCollision );
+
+                        // find intersections only with letters
+                        intersectables.push( mesh );
                         scene.add( mesh );
                     }
                 }
             );
         }
     );
-        
-    
+
+    mouseVector = new THREE.Vector3();
+    rayCaster = new THREE.Raycaster();
+
+    var mouse_is_down = false;
+
+    function onMouseDown( event )
+    {
+        var canvasCoords, selectedObj;
+
+        event.preventDefault();
+
+        canvasCoords = normalizeCoordinates( event );
+        selectedObj = checkIntersections(canvasCoords.x, canvasCoords.y);
+
+        // only if left button pressed and an object is selected
+        if ( selectedObj !== undefined && event.which === 1 )
+        {
+            selectedObj.position.setY( 60 );
+            selectedObj.__dirtyPosition = true;
+        }
+
+    }
+
+    function onMouseMove( event )
+    {
+        var canvasCoords, selectedObj;
+
+        event.preventDefault();
+
+        canvasCoords = normalizeCoordinates( event );
+        selectedObj = checkIntersections(canvasCoords.x, canvasCoords.y);
+        colorSelection( selectedObj );
+        lastIntersected = selectedObj;
+
+    }
+
+    function normalizeCoordinates( event )
+    {
+        var localX, localY, canvasX, canvasY;
+
+        // canvas element local
+        localX = event.pageX - container.offsetLeft,
+        localY = event.pageY - container.offsetTop,
+        // webgl context
+        canvasX = (localX / renderer.domElement.width) * 2 - 1,
+        canvasY = (1 - (localY / renderer.domElement.height)) * 2 - 1;
+
+        return {
+          x: canvasX,
+          y: canvasY
+        };
+
+    }
+
+    function colorSelection( selectedObj )
+    {
+         // color current selection
+        if ( selectedObj !== undefined )
+        {
+            selectedObj.material = highlightMaterial;
+        }
+
+        // restore color of previous selection, if present
+        if (lastIntersected !== undefined && lastIntersected !== selectedObj)
+        {
+            lastIntersected.material = material;
+        }
+    }
+
+    function checkIntersections( mouseX, mouseY )
+    {
+
+        mouseVector.set(mouseX, mouseY, 1);
+
+        rayCaster.setFromCamera(mouseVector, camera);
+
+        var intersections = rayCaster.intersectObjects( intersectables );
+
+        return ( intersections.length > 0 ) ? intersections[0].object : undefined;
+
+    }
     
     function animate()
     {
@@ -195,6 +301,9 @@ window.setTimeout(function onLoad() {
         requestAnimationFrame( animate );
 
     }
+
+    container.onmousemove = onMouseMove;
+    container.onmousedown = onMouseDown;
 
     animate();
 
