@@ -10,23 +10,7 @@
     },
     "scripts": {
         "start": " http-server -a localhost -p 8000",
-        "build01": "browserify exercises/01_Basic_scene/exercise.js > exercises/01_Basic_scene/bundle.js",
-        "build02": "browserify exercises/02_Animate_transformations/exercise.js > exercises/02_Animate_transformations/bundle.js",
-        "build03": "browserify exercises/03_User_interaction/exercise.js > exercises/03_User_interaction/bundle.js",
-        "build04": "browserify exercises/04_Find_intersections/exercise.js > exercises/04_Find_intersections/bundle.js",
-        "build05": "browserify exercises/05_Add_physics/exercise.js > exercises/05_Add_physics/bundle.js",
-        "build06": "browserify exercises/06_Collisions/exercise.js > exercises/06_Collisions/bundle.js",
-        "build07": "browserify exercises/07_Environment_map/exercise.js > exercises/07_Environment_map/bundle.js",
-
-        "buildDemo01": "browserify exercises/01_Basic_scene/example.js > exercises/01_Basic_scene/bundle.js",
-        "buildDemo02": "browserify exercises/02_Animate_transformations/example.js > exercises/02_Animate_transformations/bundle.js",
-        "buildDemo03": "browserify exercises/03_User_interaction/example.js > exercises/03_User_interaction/bundle.js",
-        "buildDemo04": "browserify exercises/04_Find_intersections/example.js > exercises/04_Find_intersections/bundle.js",
-        "buildDemo05": "browserify exercises/05_Add_physics/example.js > exercises/05_Add_physics/bundle.js",
-        "buildDemo06": "browserify exercises/06_Collisions/example.js > exercises/06_Collisions/bundle.js",
-        "buildDemo07": "browserify exercises/07_Environment_map/example.js > exercises/07_Environment_map/bundle.js",
-        
-	"demo": "browserify demo/demo.js > demo/bundle.js",
+        "demo": "browserify demo/demo.js > demo/bundle.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Pietro Grandi",
