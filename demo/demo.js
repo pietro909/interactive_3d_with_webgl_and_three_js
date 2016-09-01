@@ -26,7 +26,7 @@ window.setTimeout(function onLoad() {
     Physijs = require('physijs-browserify')(THREE),
     OrbitControls = require('three-orbit-controls')(THREE);
 
-    Physijs.scripts.worker = '../node_modules/physijs-browserify/libs/physi-worker.js';
+    Physijs.scripts.worker = 'interactive_3d_with_webgl_and_three_js/node_modules/physijs-browserify/libs/physi-worker.js';
     Physijs.scripts.ammo = 'ammo.js';
     
     container = document.getElementById( 'theContainer' );
