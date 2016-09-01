@@ -76,7 +76,7 @@ window.setTimeout(function onLoad() {
 
     // environment map
     envSphereGeometry = new THREE.SphereGeometry(5000, 64, 64);
-    envSphereText = THREE.ImageUtils.loadTexture('assets/images/bologna_by_night.jpg');
+    envSphereText = THREE.ImageUtils.loadTexture('interactive_3d_with_webgl_and_three_js/assets/images/bologna_by_night.jpg');
     envSphereText.minFilter = THREE.NearestFilter;
     envSphereMaterial = new THREE.MeshBasicMaterial({
         map: envSphereText,
@@ -160,7 +160,7 @@ window.setTimeout(function onLoad() {
 
     var loader = new THREE.ColladaLoader();
     loader.load(
-        'assets/3d/robot08.dae',
+        'interactive_3d_with_webgl_and_three_js/assets/3d/robot08.dae',
         function( model )
         {
             // 7 letters
